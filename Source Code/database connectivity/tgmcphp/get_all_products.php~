@@ -1,0 +1,62 @@
+<?php
+
+/*
+ * Following code will list all the products
+ */
+
+// array for JSON response
+$response = array();
+$response2 = array();
+
+// include db connect class
+require_once __DIR__ . '/db_connect.php';
+//$name='Theni';
+//$group='A1+ve';
+ $name = $_POST['name'];
+    $group = $_POST['group'];
+// connecting to db
+$db = new DB_CONNECT();
+
+// get all products from products table
+$result = mysql_query("SELECT *FROM regtable where tabdistr='$name' or Pincode='$name and tabbloodgrp='$group'") or die(mysql_error());
+
+// check for empty result
+if (mysql_num_rows($result) > 0) {
+    // looping through all results
+    // products node
+    $response["products"] = array();
+    
+    while ($row = mysql_fetch_array($result)) {
+        // temp user array
+        $product = array();
+        $product["ID"] = $row["ID"];
+        $product["tabname"] = $row["tabname"];
+ $product["tabaddr"] = $row["tabaddr"];
+ $product["tabage"] = $row["tabage"];
+ $product["tabph"] = $row["tabph"];
+ $product["tabbloodgrp"] = $row["tabbloodgrp"];
+ $product["tablast"] = $row["tablast"];
+ $product["tabdistr"] = $row["tabdistr"];
+ $product["tabgender"] = $row["tabgender"];
+      
+
+
+
+        // push single product into final response array
+        array_push($response["products"], $product);
+    }
+    // success
+    $response["success"] = 1;
+
+    // echoing JSON response
+    echo json_encode($response);
+} else {
+    // no products found
+    $response["success"] = 0;
+    $response["message"] = "No products found";
+
+    // echo no users JSON
+    echo json_encode($response2);
+    echo json_encode($response);
+}
+?>
